@@ -9,8 +9,11 @@
  */
 
 
+use std::str::FromStr;
+
 use reqwest;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use crate::{apis::ResponseContent, models};
 use super::{Error, configuration};
 
@@ -123,7 +126,9 @@ pub async fn create_customer(configuration: &configuration::Configuration, custo
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        serde_json::from_str(&local_var_content).map_err(Error::from)
+        let value = Value::from_str(&local_var_content).unwrap();
+        let value_str = serde_json::to_string(&value).unwrap();
+        serde_json::from_str(&value_str).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateCustomerError> = serde_json::from_str(&local_var_content).ok();
         let local_var_error = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
@@ -297,7 +302,9 @@ pub async fn find_customer(configuration: &configuration::Configuration, externa
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        serde_json::from_str(&local_var_content).map_err(Error::from)
+        let value = Value::from_str(&local_var_content).unwrap();
+        let value_str = serde_json::to_string(&value).unwrap();
+        serde_json::from_str(&value_str).map_err(Error::from)
     } else {
         let local_var_entity: Option<FindCustomerError> = serde_json::from_str(&local_var_content).ok();
         let local_var_error = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
